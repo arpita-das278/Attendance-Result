@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File-Based Attendance and Result Processor</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+    <aside class="sidebar">
+        <div class="brand">
+            EduTrack
+            <span>ATTENDANCE & RESULT PROCESSOR</span>
+        </div>
+
+        <p class="nav-label">WORKSPACE</p>
+
+        <nav class="nav">
+            <button class="active" data-view="dashboard">▦ Dashboard</button>
+            <button data-view="attendance">◷ Attendance</button>
+            <button data-view="results">▤ Results</button>
+            <button data-view="files">⇧ File Processor</button>
+        </nav>
+
+        <div class="side-note">
+            <strong>File-based system</strong><br>
+            Upload CSV files to view student attendance and exam results.
+        </div>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <div>
+                <strong id="topTitle">Dashboard</strong><br>
+                <small>Student academic management</small>
+            </div>
+            <div class="profile">
+                <div class="avatar">AD</div>
+                <div>Administrator<br><small>Academic Office</small></div>
+            </div>
+        </header>
+
+        <div class="content">
+
+            <!-- DASHBOARD -->
+            <section class="view active" id="dashboard">
+                <div class="page-head">
+                    <div>
+                        <h1>Dashboard Overview</h1>
+                        <p>Student attendance and result summary.</p>
+                    </div>
+                    <div class="actions">
+                        <button class="btn" onclick="downloadCSV('attendance')">
+                            Export Attendance
+                        </button>
+                        <button class="btn primary" onclick="showView('files')">
+                            + Upload File
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-top">Total Students</div>
+                        <strong id="totalStudents">6</strong>
+                        <small>Students in dataset</small>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-top">Present Today</div>
+                        <strong id="presentCount">4</strong>
+                        <small>Students present</small>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-top">Attendance Rate</div>
+                        <strong id="attendanceRate">66.7%</strong>
+                        <small>Current attendance</small>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-top">Average Marks</div>
+                        <strong id="averageMarks">78.2%</strong>
+                        <small>Average percentage</small>
+                    </div>
+                </div>
+
+                <div class="grid">
+                    <div>
+                        <div class="panel">
+                            <div class="panel-head">
+                                <h2>Recent Attendance</h2>
+                                <button class="btn" onclick="showView('attendance')">
+                                    View All
+                                </button>
+                            </div>
+                            <div class="table-wrap">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Student</th>
+                                            <th>Student ID</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recentAttendance"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="panel">
+                            <div class="panel-head">
+                                <h2>Recent Results</h2>
+                                <button class="btn" onclick="showView('results')">
+                                    View All
+                                </button>
+                            </div>
+                            <div class="table-wrap">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Student</th>
+                                            
+                                            <th>Marks</th>
+                                            <th>Grade</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="recentResults"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="panel">
+                            <h2>Quick Actions</h2>
+
+                            <div class="quick-list">
+                                <div class="quick-item">
+                                    <div>
+                                        <strong>Upload Attendance</strong>
+                                        <small>Import attendance CSV</small>
+                                    </div>
+                                    <button class="btn" onclick="setUploadType('attendance')">
+                                        Open
+                                    </button>
+                                </div>
+
+                                <div class="quick-item">
+                                    <div>
+                                        <strong>Process Results</strong>
+                                        <small>Calculate grades</small>
+                                    </div>
+                                    <button class="btn" onclick="setUploadType('results')">
+                                        Open
+                                    </button>
+                                </div>
+
+                                <div class="quick-item">
+                                    <div>
+                                        <strong>Export Report</strong>
+                                        <small>Download attendance</small>
+                                    </div>
+                                    <button class="btn" onclick="downloadCSV('attendance')">
+                                        Export
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="panel">
+                            <h2>CSV Format Guide</h2>
+                            <p class="panel-sub">
+                                Attendance columns:<br>
+                                <b>StudentID, Name, Date, Status</b>
+                            </p>
+                            <p class="panel-sub">
+                                Results columns:<br>
+                                <b>StudentID, Name, Marks, Total</b>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ATTENDANCE -->
+            <section class="view" id="attendance">
+                <div class="page-head">
+                    <div>
+                        <h1>Attendance Management</h1>
+                        <p>View and export student attendance records.</p>
+                    </div>
+                    <div class="actions">
+                        <button class="btn" onclick="downloadCSV('attendance')">
+                            Export CSV
+                        </button>
+                        <button class="btn primary" onclick="setUploadType('attendance')">
+                            Import CSV
+                        </button>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-head">
+                        <h2>Attendance Records</h2>
+                        <input class="search" id="attendanceSearch"
+                               placeholder="Search student..."
+                               oninput="renderAttendance()">
+                    </div>
+                    <p class="panel-sub" id="attendanceSub"></p>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Name</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    
+
+                                </tr>
+                            </thead>
+                            <tbody id="attendanceTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RESULTS -->
+            <section class="view" id="results">
+                <div class="page-head">
+                    <div>
+                        <h1>Result Processor</h1>
+                        <p>Calculate percentages and grades automatically.</p>
+                    </div>
+                    <div class="actions">
+                        <button class="btn" onclick="downloadCSV('results')">
+                            Export Results
+                        </button>
+                        <button class="btn primary" onclick="setUploadType('results')">
+                            Import Results
+                        </button>
+                    </div>
+                </div>
+
+                <div class="notice">
+                    Grade scale: A+ = 90%+, A = 80%+, B = 70%+, C = 60%+,
+                    D = 40%+, F = below 40%.
+                </div>
+
+                <div class="panel">
+                    <div class="panel-head">
+                        <h2>Exam Results</h2>
+                        <input class="search" id="resultsSearch"
+                               placeholder="Search student or subject..."
+                               oninput="renderResults()">
+                    </div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Name</th>
+                                   
+                                    <th>Marks</th>
+                                    <th>Percentage</th>
+                                    <th>Grade</th>
+                                    <th>Result</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultsTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FILE PROCESSOR -->
+            <section class="view" id="files">
+                <div class="page-head">
+                    <div>
+                        <h1>File Processor</h1>
+                        <p>Upload attendance or examination result CSV files.</p>
+                    </div>
+                </div>
+
+                <div class="grid">
+                    <div class="panel">
+                        <h2>Upload CSV File</h2>
+
+                        <label for="fileType">Select file type</label>
+                        <select id="fileType" class="select">
+                            <option value="attendance">Attendance File</option>
+                            <option value="results">Results File</option>
+                        </select>
+
+                        <div class="upload">
+                            <h3>Choose a CSV File</h3>
+                            <p>Supported file format: .csv</p>
+                            <label for="csvFile" class="btn primary browse">
+                                Browse Files
+                            </label>
+                            <input id="csvFile" type="file" accept=".csv"
+                                   onchange="processFile(event)">
+                        </div>
+
+                        <p id="uploadMessage" class="panel-sub">
+                            No file selected yet.
+                        </p>
+                    </div>
+
+                    <div class="panel">
+                        <h2>Sample File Format</h2>
+                        <p class="panel-sub">Attendance CSV:</p>
+                        <pre>StudentID,Name,Date,Status
+S101,Aarav Das,2026-10-31,Present
+S102,Diya Roy,2026-10-31,Absent</pre>
+
+                        <p class="panel-sub">Results CSV:</p>
+                        <pre>StudentID,Name,Marks,Total
+S101,Aarav Das,87,100
+S102,Diya Roy,76,100</pre>
+
+                        <button class="btn" onclick="downloadSample()">
+                            Download Sample CSV
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <footer class="footer">
+                File-Based Attendance and Result Processor
+            </footer>
+        </div>
+    </main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
